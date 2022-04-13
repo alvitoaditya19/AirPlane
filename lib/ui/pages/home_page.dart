@@ -21,8 +21,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      
+    if (user != null) { 
       context.read<DestinationCubit>().fecthDestination(user.uid);
     }
     super.initState();

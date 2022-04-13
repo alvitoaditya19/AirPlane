@@ -1,4 +1,5 @@
 import 'package:airplane/cubit/page_cubit.dart';
+import 'package:airplane/cubit/seat_cubit.dart';
 import 'package:airplane/shared/theme.dart';
 import 'package:airplane/ui/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +51,7 @@ class SuccessCheckoutPage extends StatelessWidget {
               title: 'My Bookings',
               onPressed: () {
                 context.read<PageCubit>().setPage(1);
+                context.read<SeatCubit>().state.clear();
                 Navigator.pushNamedAndRemoveUntil(
                     context, '/main', (route) => false);
               },
