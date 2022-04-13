@@ -3,6 +3,7 @@ import 'package:airplane/cubit/destination_cubit.dart';
 import 'package:airplane/models/destination_model.dart';
 import 'package:airplane/models/user_model.dart';
 import 'package:airplane/shared/theme.dart';
+import 'package:airplane/ui/pages/get_started_page.dart';
 import 'package:airplane/ui/widgets/destination_card.dart';
 import 'package:airplane/ui/widgets/destination_tile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,8 +20,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   void initState() {
-       DestinationModel? user;
-    context.read<DestinationCubit>().fecthDestination(user!.id);
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      
+      context.read<DestinationCubit>().fecthDestination(user.uid);
+    }
     super.initState();
   }
 
@@ -81,7 +85,8 @@ class _HomePageState extends State<HomePage> {
       });
     }
 
-    Widget popularDestination(List<DestinationModel> destinations, UserModel user) {
+    Widget popularDestination(
+        List<DestinationModel> destinations, UserModel user) {
       return Container(
         margin: EdgeInsets.only(
           top: 30,
@@ -90,40 +95,43 @@ class _HomePageState extends State<HomePage> {
           scrollDirection: Axis.horizontal,
           child: Row(
             children: destinations.map((DestinationModel destination) {
-              return DestinationCard(destination, user: user,);
+              return DestinationCard(
+                destination,
+                user: user,
+              );
             }).toList(),
           ),
         ),
       );
     }
 
-    // Widget newDestination(List<DestinationModel> destinations, UserModel user) {
-    //   return Container(
-    //     margin: EdgeInsets.only(
-    //       top: 30,
-    //       left: defaultMargin,
-    //       right: defaultMargin,
-    //       bottom: 100,
-    //     ),
-    //     child: Column(
-    //       crossAxisAlignment: CrossAxisAlignment.start,
-    //       children: [
-    //         Text(
-    //           'New Destination',
-    //           style: blackTextStyle.copyWith(
-    //             fontSize: 18,
-    //             fontWeight: semiBold,
-    //           ),
-    //         ),
-    //         Column(
-    //           children: destinations.map((DestinationModel destination) {
-    //             return DestinationTile(destination, user: user);
-    //           }).toList(),
-    //         )
-    //       ],
-    //     ),
-    //   );
-    // }
+    Widget newDestination(List<DestinationModel> destinations, UserModel user) {
+      return Container(
+        margin: EdgeInsets.only(
+          top: 30,
+          left: defaultMargin,
+          right: defaultMargin,
+          bottom: 100,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'New Destination',
+              style: blackTextStyle.copyWith(
+                fontSize: 18,
+                fontWeight: semiBold,
+              ),
+            ),
+            Column(
+              children: destinations.map((DestinationModel destination) {
+                return DestinationTile(destination, user: user);
+              }).toList(),
+            )
+          ],
+        ),
+      );
+    }
 
     return BlocConsumer<DestinationCubit, DestinationState>(
       listener: (context, state) {
@@ -142,7 +150,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               header(),
               popularDestination(state.destinations, state.user),
-              // newDestination(state.destinations),
+              newDestination(state.destinations, state.user),
             ],
           );
         }
